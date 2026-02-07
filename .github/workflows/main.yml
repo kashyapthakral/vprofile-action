@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Ubuntu Latest has maven pre installed
       - name: Maven Test
@@ -21,7 +21,7 @@ jobs:
 
       # Install java for sonar scanner
       - name: Set Java 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
@@ -44,8 +44,30 @@ jobs:
       # Check the quality gate status
       - name: Check SonarQube Quality Gate
         id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master  # Note:sonarqube, not sonarcloud
+        uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 10 
         env: 
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  BUILD_AND_PUBLISH:
+    needs: Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: upload image to ECR
+        uses: appleboy/docker-ecr-action@master
+        with:
+          access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          registry: ${{ secrets.REGISTRY }}
+          repo: ${{ env.ECR_REPOSITORY }}
+          region: ${{ env.AWS_REGION }}
+          tag: latest,${{ github.run_number }}
+          daemon_off: false
+          dockerfile: ./Dockerfile
+          context: ./
+
+      # Add your build/publish steps here (e.g., Docker build, ECR push, EKS deploy)
