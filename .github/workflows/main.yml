@@ -44,7 +44,7 @@ jobs:
       # Check the quality gate status
       - name: Check SonarQube Quality Gate
         id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master  # Note: sonarqube, not sonarcloud
+        uses: sonarsource/sonarqube-quality-gate-action@master  # Note:sonarqube, not sonarcloud
         timeout-minutes: 10 
         env: 
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
