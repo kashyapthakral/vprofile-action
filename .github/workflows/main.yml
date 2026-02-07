@@ -19,7 +19,7 @@ jobs:
       - name: Checkstyle
         run: mvn checkstyle:checkstyle
 
-      #Install java for sonar scanner
+      # Install java for sonar scanner
       - name: Set Java 11
         uses: actions/setup-java@v3
         with:
@@ -44,7 +44,7 @@ jobs:
       # Check the quality gate status
       - name: Check SonarQube Quality Gate
         id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarcloud-quality-gate-action@master
+        uses: sonarsource/sonarqube-quality-gate-action@master  # Note: sonarqube, not sonarcloud
         timeout-minutes: 10 
         env: 
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
